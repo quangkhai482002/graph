@@ -1,10 +1,9 @@
-import GraphComponent from "./antvcu/graph";
+import CyberAttackMap from "./attackmap/AtackMap";
 
 function App() {
   return (
-    <div>
-      <h1>AntV G6 in React</h1>
-      <GraphComponent />
+    <div style={{ width: "100%", height: "100vh" }}>
+      <CyberAttackMap />
     </div>
   );
 }

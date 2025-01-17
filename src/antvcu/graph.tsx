@@ -13,7 +13,7 @@ const GraphComponent: React.FC = () => {
       nodes: [
         {
           id: "node1",
-          label: "Node 1",
+          label: "Node 1111111111111111111111",
           x: 100,
           y: 200,
           customData: { type: "A", value: 10 },
@@ -72,6 +72,21 @@ const GraphComponent: React.FC = () => {
         style: {
           fill: "#C6E5FF",
           stroke: "#5B8FF9",
+        },
+        labelCfg: {
+          style: {
+            fill: "#000",
+            fontSize: 12,
+            textAlign: "center",
+            textBaseline: "middle",
+          },
+          formatter: (text: string) => {
+            const maxLength = 10; // Độ dài tối đa
+            if (text.length > maxLength) {
+              return text.slice(0, maxLength) + "...";
+            }
+            return text;
+          },
         },
       },
       defaultEdge: {
