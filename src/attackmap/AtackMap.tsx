@@ -4,6 +4,7 @@ import * as topojson from "topojson-client";
 
 import landTopology from "../assets/land_10m.json";
 import pointsData from "../assets/random-locations.json";
+import countriesData from "../assets/countries_110m.json";
 import texture from "../assets/texture.jpg";
 
 const min = 1000;
@@ -31,6 +32,14 @@ const landFeatures = topojson.feature(
   landTopology.objects.land
 ).features;
 
+const countryFeatures = countriesData.features;
+
+const countryLabels = countryFeatures.map((feature) => ({
+  lat: feature.properties.labelrank,
+  lng: feature.properties.labelrank,
+  name: feature.properties.name,
+}));
+
 const CyberAttackMap: React.FC = () => {
   return (
     <Globe
@@ -48,7 +57,7 @@ const CyberAttackMap: React.FC = () => {
       arcStroke={0.5}
       arcDashGap={2}
       arcDashAnimateTime="time"
-      polygonsData={landFeatures}
+      polygonsData={countryFeatures}
       polygonSideColor={() => "#00000000"}
       polygonCapMaterial={
         new THREE.MeshPhongMaterial({
@@ -58,6 +67,14 @@ const CyberAttackMap: React.FC = () => {
         })
       }
       polygonAltitude={0.01}
+      polygonStrokeColor={() => "#111111"}
+      labelsData={countryLabels}
+      labelLat={(d) => d.lat}
+      labelLng={(d) => d.lng}
+      labelText={(d) => d.name}
+      labelSize={0.5}
+      labelColor={() => "rgba(255, 255, 255, 0.75)"}
+      labelResolution={2}
     />
   );
 };
