@@ -1,4 +1,4 @@
-/* *,
+*,
 ::before,
 ::after {
   margin    : 0;
@@ -39,4 +39,4 @@ body,
   border          : solid 1px black;
   overflow-x      : auto;
   overflow-y      : hidden;
-} */
+}
