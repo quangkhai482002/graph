@@ -1,5 +1,7 @@
+import React, { useEffect, useRef } from "react";
 import Globe from "react-globe.gl";
 import * as THREE from "three";
+import Stats from "stats.js";
 import pointsData from "../assets/random-locations.json";
 import countriesData from "../assets/countries_110m.json";
 import texture from "../assets/texture.jpg";
@@ -27,6 +29,28 @@ const arcsData = sliceData.map(() => {
 const countryFeatures = countriesData.features || [];
 
 const CyberAttackMap: React.FC = () => {
+  const statsRef = useRef<Stats | null>(null);
+
+  useEffect(() => {
+    const stats = new Stats();
+    stats.showPanel(0);
+    stats.dom.style.padding = "10px";
+    document.body.appendChild(stats.dom);
+    statsRef.current = stats;
+
+    const animate = () => {
+      stats.begin();
+      stats.end();
+      requestAnimationFrame(animate);
+    };
+
+    requestAnimationFrame(animate);
+
+    return () => {
+      document.body.removeChild(stats.dom);
+    };
+  }, []);
+
   return (
     <Globe
       backgroundColor="#08070e"
