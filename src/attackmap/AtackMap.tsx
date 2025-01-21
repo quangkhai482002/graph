@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Globe from "react-globe.gl";
 import * as THREE from "three";
 import Stats from "stats.js";
@@ -8,28 +8,39 @@ import texture from "../assets/texture.jpg";
 
 const min = 1000;
 const max = 4000;
-const sliceData = pointsData
-  .sort(() => (Math.random() > 0.5 ? 1 : -1))
-  .slice(20, 90);
 
-const arcsData = sliceData.map(() => {
-  const randStart = Math.floor(Math.random() * sliceData.length);
-  const randEnd = Math.floor(Math.random() * sliceData.length);
-  const randTime = Math.floor(Math.random() * (max - min + 1) + min);
-  return {
-    startLat: sliceData[randStart].lat,
-    startLng: sliceData[randStart].lng,
-    endLat: sliceData[randEnd].lat,
-    endLng: sliceData[randEnd].lng,
-    time: randTime,
-    color: ["#ffffff00", "#faf7e6", "#ffffff00"],
-  };
-});
+const shuffleArray = (array: any[]) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+};
+
+const generateArcsData = (data: any[]) => {
+  return data.map(() => {
+    const randStart = Math.floor(Math.random() * data.length);
+    const randEnd = Math.floor(Math.random() * data.length);
+    const randTime = Math.floor(Math.random() * (max - min + 1) + min);
+    return {
+      startLat: data[randStart].lat,
+      startLng: data[randStart].lng,
+      endLat: data[randEnd].lat,
+      endLng: data[randEnd].lng,
+      time: randTime,
+      color: ["#ffffff00", "#faf7e6", "#ffffff00"],
+    };
+  });
+};
 
 const countryFeatures = countriesData.features || [];
 
 const CyberAttackMap: React.FC = () => {
   const statsRef = useRef<Stats | null>(null);
+  const [arcsData, setArcsData] = useState(
+    generateArcsData(shuffleArray(pointsData.slice(20, 90)))
+  );
+  const [nextArcsData, setNextArcsData] = useState(arcsData);
 
   useEffect(() => {
     const stats = new Stats();
@@ -50,6 +61,22 @@ const CyberAttackMap: React.FC = () => {
       document.body.removeChild(stats.dom);
     };
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNextArcsData(generateArcsData(shuffleArray(pointsData.slice(20, 90))));
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const switchInterval = setInterval(() => {
+      setArcsData(nextArcsData);
+    }, 5000);
+
+    return () => clearInterval(switchInterval);
+  }, [nextArcsData]);
 
   return (
     <Globe

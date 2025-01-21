@@ -64,22 +64,40 @@ function Dashboard() {
     const chartElement = document.getElementById("chart-container");
     if (!chartElement) return;
 
-    // Temporarily remove the background color
-    const originalBackgroundColor = chartElement.style.backgroundColor;
-    chartElement.style.backgroundColor = "transparent";
+    const clonedChart = chartElement.cloneNode(true) as HTMLElement;
+    clonedChart.style.backgroundColor = "transparent"; // Ensure the clone has a transparent background
+    // clonedChart.style.position = "absolute"; // Position it off-screen to avoid visual disruption
+    // clonedChart.style.top = "-9999px";
+    // clonedChart.style.left = "-9999px";
+    document.body.appendChild(clonedChart);
+    try {
+      // Capture the screenshot from the hidden clone
+      const canvas = await html2canvas(clonedChart, {
+        backgroundColor: null, // Ensures the canvas doesn't include a background color
+      });
+      const imgData = canvas.toDataURL("image/png");
 
-    const canvas = await html2canvas(chartElement);
-    const imgData = canvas.toDataURL("image/png");
+      // Generate the PDF
+      const pdf = new jsPDF("landscape", "mm", "a4");
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
-    // Restore the original background color
-    chartElement.style.backgroundColor = originalBackgroundColor;
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      pdf.save("chart.pdf");
+    } finally {
+      // Clean up by removing the cloned chart
+      document.body.removeChild(clonedChart);
+    }
 
-    const pdf = new jsPDF("landscape", "mm", "a4");
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+    // const canvas = await html2canvas(chartElement);
+    // const imgData = canvas.toDataURL("image/png");
 
-    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save("chart.pdf");
+    // const pdf = new jsPDF("landscape", "mm", "a4");
+    // const pdfWidth = pdf.internal.pageSize.getWidth();
+    // const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+    // pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+    // pdf.save("chart.pdf");
   };
 
   return (
