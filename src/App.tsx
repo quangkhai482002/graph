@@ -1,6 +1,6 @@
 import { createContext, useState } from "react";
 import { Box, CssBaseline, ThemeProvider } from "@mui/material";
-import { ColorModeContext, useMode } from "./theme";
+import { ColorModeContext, useMode, FontSizeContext } from "./theme";
 import { Navbar, SideBar } from "./scenes";
 import { Outlet } from "react-router-dom";
 
@@ -12,41 +12,42 @@ interface ToggledContextType {
 export const ToggledContext = createContext<ToggledContextType | null>(null);
 
 function App(): JSX.Element {
-  const [theme, colorMode] = useMode();
+  const [theme, colorMode, fontSizeContext] = useMode();
   const [toggled, setToggled] = useState<boolean>(false);
-
   const values: ToggledContextType = { toggled, setToggled };
 
   return (
     <ColorModeContext.Provider value={colorMode}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <ToggledContext.Provider value={values}>
-          <Box sx={{ display: "flex", height: "100vh", maxWidth: "100%" }}>
-            <SideBar />
-            <Box
-              sx={{
-                flexGrow: 1,
-                display: "flex",
-                flexDirection: "column",
-                height: "100vh",
-                maxWidth: "100%",
-              }}
-            >
-              <Navbar />
+      <FontSizeContext.Provider value={fontSizeContext}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <ToggledContext.Provider value={values}>
+            <Box sx={{ display: "flex", height: "100vh", maxWidth: "100%" }}>
+              <SideBar />
               <Box
                 sx={{
-                  overflowY: "auto",
-                  flex: 1,
+                  flexGrow: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  height: "100vh",
                   maxWidth: "100%",
                 }}
               >
-                <Outlet />
+                <Navbar />
+                <Box
+                  sx={{
+                    overflowY: "auto",
+                    flex: 1,
+                    maxWidth: "100%",
+                  }}
+                >
+                  <Outlet />
+                </Box>
               </Box>
             </Box>
-          </Box>
-        </ToggledContext.Provider>
-      </ThemeProvider>
+          </ToggledContext.Provider>
+        </ThemeProvider>
+      </FontSizeContext.Provider>
     </ColorModeContext.Provider>
   );
 }

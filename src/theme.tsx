@@ -1,5 +1,5 @@
 import { createTheme, Theme } from "@mui/material";
-import { useMemo, useState, createContext } from "react";
+import { useMemo, useState, createContext, useEffect } from "react";
 
 type Mode = "light" | "dark";
 
@@ -8,60 +8,19 @@ type ColorTokens = {
   primary: Record<number, string>;
 };
 
-// Color Design Tokens
 export const tokens = (mode: Mode): ColorTokens => ({
   ...(mode === "dark"
     ? {
-        gray: {
-          100: "#e0e0e0",
-          200: "#c2c2c2",
-          300: "#a3a3a3",
-          400: "#858585",
-          500: "#666666",
-          600: "#525252",
-          700: "#3d3d3d",
-          800: "#292929",
-          900: "#141414",
-        },
-        primary: {
-          100: "#d0d1d5",
-          200: "#a1a4ab",
-          300: "#727681",
-          400: "#434957",
-          500: "#141b2d",
-          600: "#101624",
-          700: "#0c101b",
-          800: "#080b12",
-          900: "#040509",
-        },
+        gray: { 100: "#e0e0e0", 300: "#a3a3a3" },
+        primary: { 100: "#d0d1d5", 500: "#141b2d", 600: "#101624" },
       }
     : {
-        gray: {
-          100: "#141414",
-          200: "#292929",
-          300: "#3d3d3d",
-          400: "#525252",
-          500: "#666666",
-          600: "#858585",
-          700: "#a3a3a3",
-          800: "#c2c2c2",
-          900: "#e0e0e0",
-        },
-        primary: {
-          100: "#040509",
-          200: "#080b12",
-          300: "#0c101b",
-          400: "#434957",
-          500: "#f2f0f0",
-          600: "#fcfcfc",
-          700: "#727681",
-          800: "#a1a4ab",
-          900: "#d0d1d5",
-        },
+        gray: { 100: "#141414", 300: "#3d3d3d" },
+        primary: { 100: "#040509", 500: "#f2f0f0", 600: "#fcfcfc" },
       }),
 });
-type ThemeSettings = (mode: Mode) => Theme;
-export const themeSettings: ThemeSettings = (mode) => {
+type ThemeSettings = (mode: Mode, fontSize: number) => Theme;
+export const themeSettings: ThemeSettings = (mode, fontSize) => {
   const colors = tokens(mode);
 
   return createTheme({
@@ -69,21 +28,24 @@ export const themeSettings: ThemeSettings = (mode) => {
       mode: mode,
       ...(mode === "dark"
         ? {
-            primary: {
-              main: colors.primary[100],
-            },
-            background: {
-              default: colors.primary[500],
-            },
+            primary: { main: colors.primary[100] },
+            background: { default: colors.primary[500] },
           }
         : {
-            primary: {
-              main: colors.primary[100],
-            },
-            background: {
-              default: colors.primary[500],
-            },
+            primary: { main: colors.primary[100] },
+            background: { default: colors.primary[500] },
           }),
+    },
+    typography: {
+      h4: {
+        fontSize: fontSize + 6,
+      },
+      h5: {
+        fontSize: fontSize + 2,
+      },
+      h6: {
+        fontSize: fontSize,
+      },
     },
   });
 };
@@ -93,8 +55,32 @@ type ColorModeContextType = {
 export const ColorModeContext = createContext<ColorModeContextType>({
   toggleColorMode: () => {},
 });
-export const useMode = (): [Theme, ColorModeContextType] => {
-  const [mode, setMode] = useState<Mode>("dark");
+type FontSizeContextType = {
+  fontSize: number;
+  setFontSize: (size: number) => void;
+};
+export const FontSizeContext = createContext<FontSizeContextType>({
+  fontSize: 14,
+  setFontSize: () => {},
+});
+
+export const useMode = (): [
+  Theme,
+  ColorModeContextType,
+  FontSizeContextType
+] => {
+  const storedMode = (localStorage.getItem("themeMode") as Mode) || "dark";
+  const storedFontSize = Number(localStorage.getItem("fontSize")) || 14;
+  const [mode, setMode] = useState<Mode>(storedMode);
+  const [fontSize, setFontSize] = useState<number>(storedFontSize);
+  useEffect(() => {
+    localStorage.setItem("themeMode", mode);
+  }, [mode]);
+
+  useEffect(() => {
+    localStorage.setItem("fontSize", fontSize.toString());
+  }, [fontSize]);
+
   const colorMode = useMemo(
     () => ({
       toggleColorMode: () =>
@@ -102,6 +88,10 @@ export const useMode = (): [Theme, ColorModeContextType] => {
     }),
     []
   );
-  const theme = useMemo(() => themeSettings(mode), [mode]);
-  return [theme, colorMode];
+  const fontSizeContext = useMemo(
+    () => ({ fontSize, setFontSize }),
+    [fontSize]
+  );
+  const theme = useMemo(() => themeSettings(mode, fontSize), [mode, fontSize]);
+  return [theme, colorMode, fontSizeContext];
 };

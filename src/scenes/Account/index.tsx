@@ -1,7 +1,7 @@
-import React from "react";
+import { Typography } from "@mui/material";
 
 const Account = () => {
-  return <div>Account</div>;
+  return <Typography variant="h5">Account</Typography>;
 };
 
 export default Account;

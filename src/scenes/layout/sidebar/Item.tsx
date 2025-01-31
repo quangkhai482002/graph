@@ -1,3 +1,4 @@
+import { Typography } from "@mui/material";
 import { MenuItem } from "react-pro-sidebar";
 import { Link, useLocation } from "react-router-dom";
 
@@ -21,7 +22,7 @@ const Item: React.FC<ItemProps> = ({ title, path, icon }) => {
         borderRadius: "15px",
       }}
     >
-      {title}
+      <Typography variant="h5">{title}</Typography>
     </MenuItem>
   );
 };
