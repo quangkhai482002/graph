@@ -7,6 +7,7 @@ import {
 import {
   Avatar,
   Box,
+  Button,
   Drawer,
   IconButton,
   List,
@@ -17,13 +18,19 @@ import {
 } from "@mui/material";
 import { useContext, useState } from "react";
 import { ToggledContext } from "../../../App";
-import { ColorModeContext, tokens, FontSizeContext } from "../../../theme";
+import {
+  ColorModeContext,
+  tokens,
+  FontSizeContext,
+  ThemeContext,
+} from "../../../theme";
 
 const Navbar = () => {
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
   const toggledContext = useContext(ToggledContext);
   const fontSizeContext = useContext(FontSizeContext);
+  const themeContext = useContext(ThemeContext);
   const isMdDevices = useMediaQuery("(max-width:768px)");
   const colors = tokens(theme.palette.mode);
   const [open, setOpen] = useState(false);
@@ -78,6 +85,20 @@ const Navbar = () => {
                 min={10}
                 max={30}
               />
+            </ListItem>
+            <ListItem>
+              <Button
+                onClick={() => themeContext.setPrimaryColor("#ff0000")}
+                sx={{ color: "red" }}
+              >
+                Red
+              </Button>
+              <Button
+                onClick={() => themeContext.setPrimaryColor("#0000ff")}
+                sx={{ color: "blue" }}
+              >
+                Blue
+              </Button>
             </ListItem>
           </List>
         </Drawer>
