@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { Box, CssBaseline, ThemeProvider } from "@mui/material";
 import {
   ColorModeContext,
@@ -19,6 +19,16 @@ export const ToggledContext = createContext<ToggledContextType | null>(null);
 function App(): JSX.Element {
   const [theme, colorMode, fontSizeContext, themeContext] = useMode();
   const [toggled, setToggled] = useState<boolean>(false);
+  const storedLayout =
+    (localStorage.getItem("sidebarLayout") as "vertical" | "horizontal") ||
+    "vertical";
+  const [orientation, setOrientation] = useState<"vertical" | "horizontal">(
+    storedLayout
+  );
+
+  useEffect(() => {
+    localStorage.setItem("sidebarLayout", orientation);
+  }, [orientation]);
   const values: ToggledContextType = { toggled, setToggled };
 
   return (
@@ -28,8 +38,14 @@ function App(): JSX.Element {
           <ThemeProvider theme={theme}>
             <CssBaseline />
             <ToggledContext.Provider value={values}>
-              <Box sx={{ display: "flex", height: "100vh", maxWidth: "100%" }}>
-                <SideBar />
+              <Box
+                sx={{
+                  display: orientation === "horizontal" ? "" : "flex",
+                  height: "100vh",
+                  maxWidth: "100%",
+                }}
+              >
+                <SideBar orientation={orientation} />
                 <Box
                   sx={{
                     flexGrow: 1,
@@ -39,7 +55,7 @@ function App(): JSX.Element {
                     maxWidth: "100%",
                   }}
                 >
-                  <Navbar />
+                  <Navbar setOrientation={setOrientation} />
                   <Box
                     sx={{
                       overflowY: "auto",

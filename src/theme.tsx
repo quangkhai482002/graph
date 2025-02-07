@@ -29,18 +29,8 @@ export const themeSettings: ThemeSettings = (mode, fontSize, primaryColor) => {
 
   return createTheme({
     palette: {
-      // mode: mode,
-      // ...(mode === "dark"
-      //   ? {
-      //       primary: { main: colors.primary[100] },
-      //       background: { default: colors.primary[500] },
-      //     }
-      //   : {
-      //       primary: { main: colors.primary[100] },
-      //       background: { default: colors.primary[500] },
-      //     }),
       mode: mode,
-      primary: { main: primaryColor }, // Use dynamic primary color
+      primary: { main: primaryColor },
       background: { default: colors.primary[500] },
     },
     typography: {

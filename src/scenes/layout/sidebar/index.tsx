@@ -11,108 +11,166 @@ import logo from "../../../assets/images/logo.png";
 import { tokens } from "../../../theme";
 import Item from "./Item";
 
-const SideBar = () => {
+interface SideBarProps {
+  orientation: "vertical" | "horizontal";
+}
+
+const SideBar = ({ orientation }: SideBarProps) => {
   const [collapsed, setCollapsed] = useState(false);
   const toggledContext = useContext(ToggledContext);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   return (
-    <Sidebar
-      backgroundColor={colors.primary[600]}
-      rootStyles={{
-        border: 0,
-        height: "100vh",
-      }}
-      collapsed={collapsed}
-      onBackdropClick={() => toggledContext?.setToggled(false)}
-      toggled={toggledContext?.toggled}
-      breakPoint="md"
-    >
-      <Menu
-        menuItemStyles={{
-          button: { ":hover": { background: "transparent" } },
-        }}
-      >
-        <MenuItem
+    <>
+      {orientation === "vertical" ? (
+        <Sidebar
+          backgroundColor={colors.primary[600]}
           rootStyles={{
-            margin: "10px 0 20px 0",
-            color: colors.gray[100],
+            border: 0,
+            height: "100vh",
           }}
+          collapsed={collapsed}
+          onBackdropClick={() => toggledContext?.setToggled(false)}
+          toggled={toggledContext?.toggled}
+          breakPoint="md"
         >
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
+          <Menu
+            menuItemStyles={{
+              button: { ":hover": { background: "transparent" } },
             }}
           >
-            {!collapsed && (
+            <MenuItem
+              rootStyles={{
+                margin: "10px 0 20px 0",
+                color: colors.gray[100],
+              }}
+            >
               <Box
-                display="flex"
-                alignItems="center"
-                gap="10px"
-                sx={{ transition: ".3s ease" }}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
               >
-                <img
-                  style={{ width: "30px", height: "30px", borderRadius: "8px" }}
-                  src={logo}
-                  alt="Argon"
-                />
-                <Typography
-                  variant="h5"
-                  fontWeight="bold"
-                  textTransform="capitalize"
-                  color="#157bf8"
-                >
-                  MP
-                </Typography>
+                {!collapsed && (
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    gap="10px"
+                    sx={{ transition: ".3s ease" }}
+                  >
+                    <img
+                      style={{
+                        width: "30px",
+                        height: "30px",
+                        borderRadius: "8px",
+                      }}
+                      src={logo}
+                      alt="Argon"
+                    />
+                    <Typography
+                      variant="h5"
+                      fontWeight="bold"
+                      textTransform="capitalize"
+                      color="#157bf8"
+                    >
+                      MP
+                    </Typography>
+                  </Box>
+                )}
+                <IconButton onClick={() => setCollapsed(!collapsed)}>
+                  <MenuOutlined />
+                </IconButton>
               </Box>
-            )}
-            <IconButton onClick={() => setCollapsed(!collapsed)}>
-              <MenuOutlined />
-            </IconButton>
-          </Box>
-        </MenuItem>
-      </Menu>
+            </MenuItem>
+          </Menu>
 
-      <Box mb={5} px={collapsed ? undefined : "5%"}>
-        <Menu
-          menuItemStyles={{
-            button: {
-              ":hover": {
-                color: colors.gray[300],
-                background: "rgba(134, 141, 251, 0.1)",
-                transition: ".4s ease",
-                borderRadius: "15px",
-              },
-            },
+          <Box mb={5} px={collapsed ? undefined : "5%"}>
+            <Menu
+              menuItemStyles={{
+                button: {
+                  ":hover": {
+                    color: colors.gray[300],
+                    background: "rgba(134, 141, 251, 0.1)",
+                    transition: ".4s ease",
+                    borderRadius: "15px",
+                  },
+                },
+              }}
+            >
+              <Item title="Dashboard" path="/" icon={<DashboardOutlined />} />
+            </Menu>
+            <Typography
+              variant="h6"
+              color={colors.gray[300]}
+              sx={{ m: "10px 0 5px 10px" }}
+            >
+              {!collapsed ? "Manage accounts" : " "}
+            </Typography>
+
+            <Menu
+              menuItemStyles={{
+                button: {
+                  ":hover": {
+                    color: colors.gray[300],
+                    background: "rgba(134, 141, 251, 0.1)",
+                    transition: ".4s ease",
+                    borderRadius: "15px",
+                  },
+                },
+              }}
+            >
+              <Item
+                title="Accounts"
+                path="/account"
+                icon={<PeopleAltOutlined />}
+              />
+            </Menu>
+          </Box>
+        </Sidebar>
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            gap: 1,
+            p: 1,
           }}
         >
-          <Item title="Dashboard" path="/" icon={<DashboardOutlined />} />
-        </Menu>
-        <Typography
-          variant="h6"
-          color={colors.gray[300]}
-          sx={{ m: "10px 0 5px 10px" }}
-        >
-          {!collapsed ? "Manage accounts" : " "}
-        </Typography>
-        <Menu
-          menuItemStyles={{
-            button: {
-              ":hover": {
-                color: colors.gray[300],
-                background: "rgba(134, 141, 251, 0.1)",
-                transition: ".4s ease",
-                borderRadius: "15px",
+          <Menu
+            menuItemStyles={{
+              button: {
+                ":hover": {
+                  color: colors.gray[300],
+                  background: "rgba(134, 141, 251, 0.1)",
+                  transition: ".4s ease",
+                  borderRadius: "15px",
+                },
               },
-            },
-          }}
-        >
-          <Item title="Accounts" path="/account" icon={<PeopleAltOutlined />} />
-        </Menu>
-      </Box>
-    </Sidebar>
+            }}
+          >
+            <Item title="Dashboard" path="/" icon={<DashboardOutlined />} />
+          </Menu>
+          <Menu
+            menuItemStyles={{
+              button: {
+                ":hover": {
+                  color: colors.gray[300],
+                  background: "rgba(134, 141, 251, 0.1)",
+                  transition: ".4s ease",
+                  borderRadius: "15px",
+                },
+              },
+            }}
+          >
+            <Item
+              title="Accounts"
+              path="/account"
+              icon={<PeopleAltOutlined />}
+            />
+          </Menu>
+        </Box>
+      )}
+    </>
   );
 };
 

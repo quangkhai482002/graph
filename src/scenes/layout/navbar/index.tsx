@@ -25,7 +25,11 @@ import {
   ThemeContext,
 } from "../../../theme";
 
-const Navbar = () => {
+interface NavbarProps {
+  setOrientation: (orientation: "vertical" | "horizontal") => void;
+}
+
+const Navbar = ({ setOrientation }: NavbarProps) => {
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
   const toggledContext = useContext(ToggledContext);
@@ -98,6 +102,14 @@ const Navbar = () => {
                 sx={{ color: "blue" }}
               >
                 Blue
+              </Button>
+            </ListItem>
+            <ListItem>
+              <Button onClick={() => setOrientation("vertical")}>
+                Vertical
+              </Button>
+              <Button onClick={() => setOrientation("horizontal")}>
+                Horizontal
               </Button>
             </ListItem>
           </List>
